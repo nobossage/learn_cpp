@@ -32,33 +32,50 @@
 
 class Numbers
 {
-    public:
-    int m_n1;
-    int m_n2;
+    int m_a;
+    int m_b;
+    int m_c;
+
+public:
     
-    void set (int x, int y)
+    void setValues (int x, int y, int z)
     {
-        m_n1 = x;
-        m_n2 = y;
+        m_a = x;
+        m_b = y;
+        m_c = z;
     }
     
     void print()
     {
-        std::cout << "Numbers(" << m_n1 << ", " << m_n2 << ")" << std::endl;
-        
+        std::cout << "<" << m_a << ", " << m_b << ", " << m_c << "> " << std::endl;
+    }
+    
+    bool isEqual( const Numbers &other )
+    {
+        return other.m_a == m_a && other.m_b == m_b && other.m_c == m_c;
     }
 };
  
 
 int main()
 {
-	Numbers n1;
-	n1.set(3, 3); // инициализируем объект n1 значениями 3 и 3
-	
-	Numbers n2{ 4, 4 }; // инициализируем объект n2 значениями 4 и 4
+    Numbers point1;
+    point1.setValues(3.0, 4.0, 5.0);
  
-	n1.print();
-	n2.print();
+    Numbers point2;
+    point2.setValues(3.0, 4.0, 5.0);
  
-	return 0;
+    if (point1.isEqual(point2))
+        std::cout << "point1 and point2 are equal\n";
+    else
+        std::cout << "point1 and point2 are not equal\n";
+ 
+    Numbers point3;
+    point3.setValues(7.0, 8.0, 9.0);
+ 
+    if (point1.isEqual(point3))
+        std::cout << "point1 and point3 are equal\n";
+    else
+        std::cout << "point1 and point3 are not equal\n";
+ 
 }
