@@ -22,7 +22,27 @@
  */
 
 #include <iostream>
-//class Point3D;
+class Vector3D;
+
+class Point3D
+{
+private:
+	double m_x, m_y, m_z;
+ 
+public:
+	Point3D(double x = 0.0, double y = 0.0, double z = 0.0)
+		: m_x(x), m_y(y), m_z(z)
+	{
+ 
+	}
+ 
+	void print()
+	{
+		std::cout << "Point(" << m_x << " , " << m_y << " , " << m_z << ")\n";
+	}
+	void moveByVector(const Vector3D &v);
+};
+
 
 class Vector3D
 {
@@ -41,34 +61,16 @@ public:
 		std::cout << "Vector(" << m_x << " , " << m_y << " , " << m_z << ")\n";
 	}
     
-    friend class Point3D;//::moveByVector(const Vector3D &v);
+    friend void Point3D::moveByVector(const Vector3D &v);
 };
  
-class Point3D
-{
-private:
-	double m_x, m_y, m_z;
- 
-public:
-	Point3D(double x = 0.0, double y = 0.0, double z = 0.0)
-		: m_x(x), m_y(y), m_z(z)
-	{
- 
-	}
- 
-	void print()
-	{
-		std::cout << "Point(" << m_x << " , " << m_y << " , " << m_z << ")\n";
-	}
- 
-	void moveByVector(const Vector3D &v)
+	void Point3D::moveByVector(const Vector3D &v)
 	{
         m_x += v.m_x;
         m_y += v.m_y;
         m_z += v.m_z;
 		// Реализуйте эту функцию как дружественную классу Vector3D
-	}
-};
+	} 
  
 int main()
 {
