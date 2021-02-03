@@ -1,47 +1,53 @@
-/*
- * 138.cpp
- * 
- * Copyright 2021 Viktor <gwl@linux-rbdr.site>
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301, USA.
- * 
- * 
- */
-
-
 #include <iostream>
+#include <string>
 #include <vector>
-
+ 
 struct StudentGrade
 {
-    std::string     name;
-    char            grade;
+	std::string name;
+	char grade;
 };
-
+ 
 class GradeMap
 {
-    std::vector<StudentGrade> m_map;
-    
+private:
+	std::vector<StudentGrade> m_map;
+ 
 public:
-    GradeMap()
-    {}
+	GradeMap()
+	{
+	}
+ 
+	char& operator[](const std::string &name);
 };
-int main(int argc, char **argv)
+ 
+char& GradeMap::operator[](const std::string &name)
 {
-	
+	// Смотрим, найдем ли мы имя ученика в векторе
+	for (auto &ref : m_map)
+	{
+		// Если нашли, то возвращаем ссылку на его оценку
+		if (ref.name == name)
+			return ref.grade;
+	}
+ 
+	// В противном случае, создаем новый StudentGrade для нового ученика
+	StudentGrade temp { name, ' ' };
+ 
+	// Помещаем его в конец вектора
+	m_map.push_back(temp);
+ 
+	// И возвращаем ссылку на его оценку
+	return m_map.back().grade;
+}
+ 
+int main()
+{
+	GradeMap grades;
+	grades["John"] = 'A';
+	grades["Martin"] = 'B';
+	std::cout << "John has a grade of " << grades["John"] << '\n';
+	std::cout << "Martin has a grade of " << grades["Martin"] << '\n';
+ 
 	return 0;
 }
-
