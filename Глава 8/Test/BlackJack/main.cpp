@@ -27,133 +27,6 @@
 #include <cstdlib> // для rand() и srand()
 
  
-/*
- 
-void printDeck(const std::array<Card, 52> deck)
-{
-	for (const auto &card : deck)
-	{
-		printCard(card);
-		std::cout << ' ';
-	}
- 
-	std::cout << '\n';
-}
- 
-void swapCard(Card &a, Card &b)
-{
-	Card temp = a;
-	a = b;
-	b = temp;
-}
- 
-// Генерируем случайное число между min и max (включительно).
-// Предполагается, что srand() уже был вызван
-int getRandomNumber(int min, int max)
-{
-	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0); // используем static, так как это значение нужно вычислить единожды
- 	// Равномерно распределяем вычисление значения из нашего диапазона
-	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
-}
- 
-void shuffleDeck(std::array<Card, 52> &deck)
-{
-	// Перебираем каждую карту в колоде
-	for (int index = 0; index < 52; ++index)
-	{
-		// Выбираем любую случайную карту
-		int swapIndex = getRandomNumber(0, 51);
-		// Меняем местами с нашей текущей картой
-		swapCard(deck[index], deck[swapIndex]);
-	}
-}
- 
-
-char getPlayerChoice()
-{
-	std::cout << "(h) to hit, or (s) to stand: ";
-	char choice;
-	do
-	{
-		std::cin >> choice;
-	} while (choice != 'h' && choice != 's');
-	
-	return choice;
-}
- 
-bool playBlackjack(const std::array<Card, 52> deck)
-{
-	const Card *cardPtr = &deck[0];
- 
-	int playerTotal = 0;
-	int dealerTotal = 0;
- 
-	// Дилер получает одну карту
-	dealerTotal += getCardValue(*cardPtr++);
-	std::cout << "The dealer is showing: " << dealerTotal << '\n';
- 
-	// Игрок получает две карты
-	playerTotal += getCardValue(*cardPtr++);
-	playerTotal += getCardValue(*cardPtr++);
- 
-	// Игрок начинает
-	while (1)
-	{
-		std::cout << "You have: " << playerTotal << '\n';
-		char choice = getPlayerChoice();
-		if (choice == 's')
-			break;
- 
-		playerTotal += getCardValue(*cardPtr++);
-		
-		// Смотрим, не проиграл ли игрок
-		if (playerTotal > 21)
-			return false;
-	}
- 
-	// Если игрок не проиграл (у него не больше 21 очка), тогда дилер получает карты до тех пор, пока у него в сумме будет не меньше 17 очков
-	while (dealerTotal < 17)
-	{
-		dealerTotal += getCardValue(*cardPtr++);
-		std::cout << "The dealer now has: " << dealerTotal << '\n';
-	}
- 
-	// Если у дилера больше 21, то он проиграл, а игрок выиграл
-	if (dealerTotal > 21)
-		return true;
- 
-	return (playerTotal > dealerTotal);
-}
- 
-int main()
-{
-	srand(static_cast<unsigned int>(time(0))); // используем системные часы в качестве стартового значения
-	rand(); // пользователям Visual Studio: делаем сброс первого случайного числа
- 
-	std::array<Card, 52> deck;
-	
-	// Конечно, можно было бы инициализировать каждую карту отдельно, но зачем? Ведь есть циклы!
-	int card = 0;
-	for (int suit = 0; suit < MAX_SUITS; ++suit)
-	for (int rank = 0; rank < MAX_RANKS; ++rank)
-	{
-		deck[card].suit = static_cast<CardSuit>(suit);
-		deck[card].rank = static_cast<CardRank>(rank);
-		++card;
-	}
-	
-	shuffleDeck(deck);
- 
-	if (playBlackjack(deck))
-		std::cout << "You win!\n";
-	else
-		std::cout << "You lose!\n";
- 
-	return 0;
-}
-//*/      
-/**************************************************************************  //*/
-
 class Card
 {
 
@@ -191,10 +64,10 @@ private:
     
     
 public:
-    Card(CardRank rank, CardSuit suit): m_rank(rank), m_suit(suit)
+    Card(CardRank rank = MAX_RANKS, CardSuit suit = MAX_SUITS): m_rank(rank), m_suit(suit)
     {}
     
-    const void printCard()
+    void printCard() const
     {
         switch (m_rank)
         {
@@ -222,7 +95,7 @@ public:
         }
     }
     
-    const int getCardValue()
+    int getCardValue() const 
     {
         switch (m_rank)
         {
@@ -246,35 +119,149 @@ public:
  
 };
 
-class Desk
+class Deck
 {
     
 private:
-    std::array<Card, 52> m_desk;
+    std::array<Card, 52> m_deck;
+    int m_cardIndex {0};
     
 public:
-    Desk()
+    Deck()
     {
         int currentCard = 0;
         for (int suit = 0; suit < Card::MAX_SUITS; ++suit)
             for (int rank = 0; rank < Card::MAX_RANKS; ++rank)
             {
-                
-                m_desk.at(currentCard) =  Card(static_cast<Card::CardRank>(rank),static_cast<Card::CardSuit>(suit));
-                //deck[currentCard].suit = static_cast<CardSuit>(suit);
-                //deck[currentCard].rank = static_cast<CardRank>(rank);
+                m_deck.at(currentCard) =  Card(static_cast<Card::CardRank>(rank),static_cast<Card::CardSuit>(suit));
                 ++currentCard;
             }
     }
+    
+    void printDeck() const
+    {
+        for (int currentCard = 0; currentCard < 52; ++currentCard)
+        {
+            Card curCard = m_deck[currentCard];
+            curCard.printCard();
+            std::cout << ' ';
+            if ((currentCard+1) % 13 == 0) 
+                std::cout << '\n';
+        }
+ 
+        std::cout << '\n';
+    }
+    
+private:
+
+    int getRandomNumber(int min, int max) const
+    {
+        static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0); // используем static, так как это значение нужно вычислить единожды
+        // Равномерно распределяем вычисление значения из нашего диапазона
+        return static_cast<int>(rand() * fraction * (max - min + 1) + min);
+    }
+    
+    void swapCard(Card &a, Card &b) const
+    {
+        Card temp = a;
+        a = b;
+        b = temp;
+    }
+ 
+public:
+    void shuffleDeck()
+    {
+        // Перебираем каждую карту в колоде
+        for (int index = 0; index < 52; ++index)
+        {
+            // Выбираем любую случайную карту
+            int swapIndex = getRandomNumber(0, 51);
+            // Меняем местами с нашей текущей картой
+            swapCard(m_deck[index], m_deck[swapIndex]);
+        }
+        m_cardIndex = 0;
+    }
+    
+    const Card & dealCard()
+    {
+        
+        return m_deck.at(m_cardIndex++);
+    }
 };
 
+char getPlayerChoice()
+{
+	std::cout << "(h) to hit, or (s) to stand: ";
+	char choice;
+	do
+	{
+		std::cin >> choice;
+	} while (choice != 'h' && choice != 's');
+	
+	return choice;
+}
+ 
+//bool playBlackjack(const std::array<Card, 52> deck)
+bool playBlackjack(Deck &deck)
+{
+
+ 
+	int playerTotal = 0;
+	int dealerTotal = 0;
+ 
+	// Дилер получает одну карту
+	dealerTotal += deck.dealCard().getCardValue();
+	std::cout << "The dealer is showing: " << dealerTotal << '\n';
+ 
+	// Игрок получает две карты
+	playerTotal += deck.dealCard().getCardValue();
+	playerTotal += deck.dealCard().getCardValue();
+ 
+	// Игрок начинает
+	while (1)
+	{
+		std::cout << "You have: " << playerTotal << '\n';
+		char choice = getPlayerChoice();
+		if (choice == 's')
+			break;
+ 
+		playerTotal += deck.dealCard().getCardValue();
+		
+		// Смотрим, не проиграл ли игрок
+		if (playerTotal > 21)
+			return false;
+	}
+ 
+	// Если игрок не проиграл (у него не больше 21 очка), тогда дилер получает карты до тех пор, пока у него в сумме будет не меньше 17 очков
+	while (dealerTotal < 17)
+	{
+		dealerTotal += deck.dealCard().getCardValue();
+		std::cout << "The dealer now has: " << dealerTotal << '\n';
+	}
+ 
+	// Если у дилера больше 21, то он проиграл, а игрок выиграл
+	if (dealerTotal > 21)
+		return true;
+ 
+	return (playerTotal > dealerTotal);
+}
+ 
      
 int main()
 {
-    Card cardQueenHearts(Card::RANK_QUEEN, Card::SUIT_HEART);
-    cardQueenHearts.printCard();
-    std::cout << " has the value " << cardQueenHearts.getCardValue() << '\n';
+	srand(static_cast<unsigned int>(time(0))); // используем системные часы в качестве стартового значения
+	rand(); // пользователям Visual Studio: делаем сброс первого случайного числа
  
+    Deck deck;
+	deck.shuffleDeck();
+	deck.printDeck();
+	//std::cout << "The first card has value: " << deck.dealCard().getCardValue() << '\n';
+	//std::cout << "The second card has value: " << deck.dealCard().getCardValue() << '\n';
+    if (playBlackjack(deck))
+        std::cout << "Win!";
+    else 
+        std::cout << "Loss!";
+    
   
     return 0;
 }
