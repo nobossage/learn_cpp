@@ -157,8 +157,7 @@ int main()
 class Card
 {
 
-    public:
-    
+public:
     enum CardSuit
     {
         SUIT_CLUB,
@@ -186,13 +185,13 @@ class Card
         MAX_RANKS
     };
     
-    private:
-    CardSuit m_suit;
+private:
     CardRank m_rank;
+    CardSuit m_suit;
     
-    Card(CardSuit suit, CardRank rank): 
-    m_suit(suit),
-    m_rank(rank)
+    
+public:
+    Card(CardRank rank, CardSuit suit): m_rank(rank), m_suit(suit)
     {}
     
     const void printCard()
@@ -247,7 +246,35 @@ class Card
  
 };
 
+class Desk
+{
+    
+private:
+    std::array<Card, 52> m_desk;
+    
+public:
+    Desk()
+    {
+        int currentCard = 0;
+        for (int suit = 0; suit < Card::MAX_SUITS; ++suit)
+            for (int rank = 0; rank < Card::MAX_RANKS; ++rank)
+            {
+                
+                m_desk.at(currentCard) =  Card(static_cast<Card::CardRank>(rank),static_cast<Card::CardSuit>(suit));
+                //deck[currentCard].suit = static_cast<CardSuit>(suit);
+                //deck[currentCard].rank = static_cast<CardRank>(rank);
+                ++currentCard;
+            }
+    }
+};
+
+     
 int main()
 {
+    Card cardQueenHearts(Card::RANK_QUEEN, Card::SUIT_HEART);
+    cardQueenHearts.printCard();
+    std::cout << " has the value " << cardQueenHearts.getCardValue() << '\n';
+ 
+  
     return 0;
 }
